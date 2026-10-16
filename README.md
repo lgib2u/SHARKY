@@ -36,8 +36,6 @@ servo testing in the browser.
 - [`software/sharky_control`](software/sharky_control) — gait, motion, camera, and dashboard
 - [`software/ros2_pca9685`](software/ros2_pca9685) — ROS 2 servo-driver package
 - [`config`](config) — bounded crawl-gait profile and local configuration template
-- [`hardware/fusion_tools`](hardware/fusion_tools) — Fusion 360 assembly utilities
-- [`assets/exploded`](assets/exploded) — transparent animation and component renders
 
 ## Build SHARKY
 
