@@ -2,10 +2,6 @@
 
 ![SHARKY components](../assets/exploded/sharky-components.png)
 
-## Wiring Diagram
-
-![SHARKY wiring diagram](../assets/diagrams/sharky-wiring-diagram.png)
-
 For the system architecture, electrical layout, and numbered servo positions,
 see the [build and wiring guide](BUILD.md).
 

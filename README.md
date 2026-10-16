@@ -31,10 +31,6 @@ servo testing in the browser.
 | --- | --- | --- | --- |
 | Nine Fusion fabrication STLs | Raspberry Pi Zero 2 W + PCA9685 + eight servos | Python and C++ ROS 2 packages | Responsive local web dashboard |
 
-## System overview
-
-![SHARKY system diagram](assets/diagrams/sharky-system-diagram.png)
-
 ## Everything you need to get started
 
 - [`parts/stl`](parts/stl) — the full printable body set, exported from Fusion
@@ -52,17 +48,6 @@ servo testing in the browser.
 
 The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
 **ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
-
-### Wiring
-
-![SHARKY wiring diagram](assets/diagrams/sharky-wiring-diagram.png)
-
-### Servo channels
-
-![SHARKY servo channel map](assets/diagrams/sharky-servo-channel-map.png)
-
-See the [build and wiring guide](docs/BUILD.md) for the channel table and
-assembly notes.
 
 ## Licence
 
