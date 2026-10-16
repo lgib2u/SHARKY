@@ -61,5 +61,8 @@ background. Open the [10-second WebM](assets/exploded/sharky-exploded-transparen
 
 ## Licence
 
-The vendored `ros2_pca9685` package retains its BSD-3-Clause licence. See
-[`NOTICE.md`](NOTICE.md) for the project-original code, parts, and media.
+SHARKY's original code, printable parts, documentation, and media are licensed
+under [CC BY-NC 4.0](LICENSE): sharing and adaptation are welcome with
+attribution, but commercial use is not permitted. The vendored
+`ros2_pca9685` package retains its BSD-3-Clause licence. See
+[`NOTICE.md`](NOTICE.md) for scope and attribution details.
