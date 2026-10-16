@@ -1,6 +1,6 @@
 # Hardware overview
 
-![SHARKY core components](../assets/exploded/sharky-core-components.png)
+![SHARKY components](../assets/exploded/sharky-components.png)
 
 The illustrated build uses:
 
@@ -17,19 +17,25 @@ and mechanical checks.
 
 ## Geometry and parts
 
-STL meshes are under [`hardware/urdf/fusion_export`](../hardware/urdf/fusion_export).
-The Fusion audit files record the intended component transforms and eight named
-revolute joints. The current exported Xacro predates the final joint assembly,
-so regenerate and validate the model before simulation or control work.
+The printable geometry is supplied directly as millimetre-scale STL files under
+[`parts/stl`](../parts/stl). These are the actual Fusion body exports, separated
+from simulation metadata and renamed by their physical position on the robot.
+The body is approximately 120 mm long, which provides a useful scale check when
+the file is first imported into a slicer.
 
-Expected leg naming, assuming Fusion +X is forward and +Y is left:
+Print one of each file:
 
-| CAD component | Position |
+| Files | Position |
 | --- | --- |
-| `LegL1_1_1` / `FootL1_1_1` | Front left |
-| `LegR1_1_1` / `FootR1_1_1` | Front right |
-| `LegL2_1_1` / `FootL2_1_1` | Rear left |
-| `LegR2_1_1` / `FootR2_1_1` | Rear right |
+| `body.stl` | Main chassis and shell |
+| `front-left-leg.stl` / `front-left-foot.stl` | Front left |
+| `front-right-leg.stl` / `front-right-foot.stl` | Front right |
+| `rear-left-leg.stl` / `rear-left-foot.stl` | Rear left |
+| `rear-right-leg.stl` / `rear-right-foot.stl` | Rear right |
+
+Open the models in your slicer and inspect every layer before printing. Printer
+tolerances, servo variants, screw selection, material, wall count, infill, and
+support needs remain build-specific.
 
 ## Electrical caution
 
