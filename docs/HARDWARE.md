@@ -4,7 +4,10 @@
 
 ## Wiring Diagram
 
-[ADD HERE]
+![SHARKY wiring diagram](../assets/diagrams/sharky-wiring-diagram.png)
+
+For the system architecture, electrical layout, and numbered servo positions,
+see the [build and wiring guide](BUILD.md).
 
 ## Geometry and parts
 
