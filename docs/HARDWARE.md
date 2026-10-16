@@ -2,18 +2,9 @@
 
 ![SHARKY components](../assets/exploded/sharky-components.png)
 
-The illustrated build uses:
+## Wiring Diagram
 
-- Raspberry Pi Zero 2 W
-- PCA9685 16-channel PWM/servo controller
-- eight micro servos
-- Raspberry Pi-compatible camera
-- regulated servo power stage and a separate, appropriate Pi supply
-- fabricated shell, internal holder, four legs, four knuckles, and detail inserts
-
-The image is an exploded presentation, not a wiring diagram. Components are
-shown at a common illustrative scale and substitutions require fresh electrical
-and mechanical checks.
+[ADD HERE]
 
 ## Geometry and parts
 
