@@ -36,14 +36,3 @@ Print one of each file:
 Open the models in your slicer and inspect every layer before printing. Printer
 tolerances, servo variants, screw selection, material, wall count, infill, and
 support needs remain build-specific.
-
-## Electrical caution
-
-Servos can draw large transient currents. Do not power them from the Raspberry
-Pi's regulator or assume a board's printed current rating applies without
-cooling, wire, connector, and battery checks. Use a fuse, correct polarity,
-shared signal ground, strain relief, and an accessible physical power cut-off.
-
-Lithium cells can cause fire or injury if selected, charged, protected, or
-wired incorrectly. Use a battery pack and charger designed for the exact cell
-configuration, or seek review from someone qualified to assess the power design.

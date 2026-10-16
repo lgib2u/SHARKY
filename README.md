@@ -1,99 +1,65 @@
 <p align="center">
-  <img src="assets/header/sharky-header.gif" alt="SHARKY — a compact ROS 2 quadruped robot" width="100%">
+  <img src="assets/header/sharky-header.gif" alt="SHARKY — compact quadruped robot" width="100%">
+</p>
+
+<h3 align="center">Print it. Build it. Bring it to life with ROS 2.</h3>
+
+<p align="center">
+  SHARKY is a compact Raspberry Pi quadruped with eight articulated servos,
+  live camera vision, a browser controller, and a whole lot of bite.
 </p>
 
 <p align="center">
-  A compact Raspberry Pi and ROS 2 quadruped built for understandable hardware,
-  cautious experimentation, and a lot of character.
+  <a href="parts/stl"><strong>Download the STLs</strong></a> ·
+  <a href="docs/SETUP.md"><strong>Set up the Pi + ROS 2</strong></a> ·
+  <a href="docs/HARDWARE.md"><strong>See the hardware</strong></a>
 </p>
-
-<p align="center">
-  <a href="#start-here">Start here</a> ·
-  <a href="docs/HARDWARE.md">Hardware</a> ·
-  <a href="parts/stl">Print files</a> ·
-  <a href="docs/SETUP.md">Setup</a> ·
-  <a href="docs/SAFETY.md">Safety</a> ·
-  <a href="assets/exploded/sharky-exploded-transparent.webm">Exploded-view video</a>
-</p>
-
-## Meet SHARKY
-
-SHARKY is a small eight-servo quadruped with a Raspberry Pi brain, a PCA9685
-servo controller, a camera, and a deliberately simple crawl gait. This release
-collects the printable/CAD-derived robot geometry, ROS 2 control software,
-example configuration, and visual assets in one place.
-
-The repository is designed to be safe to inspect and build offline. Cloning or
-building it **does not move a robot**. Hardware motion requires all of the
-following: a wired servo controller, a running hardware driver, the SHARKY
-motion stack, and an explicit arm command.
-
-## Exploded view
 
 <p align="center">
   <a href="assets/exploded/sharky-exploded-transparent.webm">
-    <img src="assets/exploded/sharky-exploded-transparent.gif" alt="Transparent animated exploded view of SHARKY" width="84%">
+    <img src="assets/exploded/sharky-exploded-transparent.gif" alt="Exploded view of SHARKY" width="76%">
   </a>
 </p>
 
-This is the latest compact render: corrected Fusion colours, transparent
-background, 10 seconds, and 24 fps. Click the animation for the
-[VP9 WebM with alpha](assets/exploded/sharky-exploded-transparent.webm). Separate
-transparent stills show the [internal core module](assets/exploded/sharky-core-module.png)
-and [component list](assets/exploded/sharky-components.png).
+## A robot you can make your own
 
-## What's in the repository
+SHARKY combines printable mechanical parts with a focused ROS 2 control stack.
+The motion controller drives a smooth crawl gait, the camera streams a live
+view, and the lightweight dashboard puts movement, speed, pose, and individual
+servo testing in the browser.
 
-| Path | Contents |
-| --- | --- |
-| [`parts/stl`](parts/stl) | Nine fabrication-ready STL exports, named by robot position |
-| [`hardware/fusion_tools`](hardware/fusion_tools) | Fusion 360 helpers used to audit and configure the assembly |
-| [`software/sharky_control`](software/sharky_control) | ROS 2 motion, gait, camera, and local dashboard package |
-| [`software/ros2_pca9685`](software/ros2_pca9685) | Vendored PCA9685 ROS 2 driver (BSD-3-Clause) |
-| [`config`](config) | Safe example environment and bounded crawl-gait profile |
-| [`assets`](assets) | Header art and exploded-view media |
-| [`docs`](docs) | Build, setup, safety, and privacy notes |
+| Print | Build | Code | Control |
+| --- | --- | --- | --- |
+| Nine ready-to-slice STL files | Raspberry Pi Zero 2 W + PCA9685 + eight servos | Python and C++ ROS 2 packages | Responsive local web dashboard |
 
-## Start here
+## Everything you need to get started
 
-1. Read the [hardware overview](docs/HARDWARE.md) and source equivalent parts.
-2. Download and slice the files in [`parts/stl`](parts/stl), checking millimetre
-   scale and orientation before printing.
-3. Assemble the frame with power disconnected and verify every linkage by hand.
-4. Install a supported ROS 2 distribution on the Raspberry Pi.
-5. Follow the [software setup](docs/SETUP.md) to build the workspace.
-6. Keep the robot raised clear of the floor for first power-on.
-7. Verify the servo channel map and limits for **your** assembly before arming.
+- [`parts/stl`](parts/stl) — body, four legs, and four feet
+- [`software/sharky_control`](software/sharky_control) — gait, motion, camera, and dashboard
+- [`software/ros2_pca9685`](software/ros2_pca9685) — ROS 2 servo-driver package
+- [`config`](config) — bounded crawl-gait profile and local configuration template
+- [`hardware/fusion_tools`](hardware/fusion_tools) — Fusion 360 assembly utilities
+- [`assets/exploded`](assets/exploded) — transparent animation and component renders
 
-The supplied gait controller starts disarmed, applies immutable per-channel
-angle envelopes, and includes a motion-command watchdog. Those safeguards are
-helpful, but they cannot compensate for an incorrect servo horn, reversed joint,
-miswired power rail, or unsuitable battery system.
+## Build SHARKY
 
-## A safe first session
+1. [Print the nine parts](parts/stl).
+2. Assemble the body, eight servos, Raspberry Pi, camera, and controller board.
+3. [Install Ubuntu and ROS 2 on the Pi](docs/SETUP.md).
+4. Build the SHARKY workspace and launch the dashboard.
+5. Tune the gait profile and make SHARKY move your way.
 
-Build and inspect first; do not launch the hardware stack while assembling.
-When you are ready for a powered check, disconnect the servo power, start ROS,
-confirm that the expected nodes and services appear, then shut down again. Only
-after the mechanical and electrical checks in [SAFETY.md](docs/SAFETY.md) should
-you reconnect servo power and perform a restrained, raised test.
+The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
+**ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
 
-## Privacy
+## See inside
 
-This public release intentionally contains no passwords, private network names,
-IP addresses, machine usernames, SSH targets, device images, tokens, or personal
-filesystem paths. Configure your own values locally from
-[`config/sharky.env.example`](config/sharky.env.example), and never commit the
-resulting private environment file.
+The latest exploded animation uses the original Fusion colours on a transparent
+background. Open the [10-second WebM](assets/exploded/sharky-exploded-transparent.webm),
+[core module](assets/exploded/sharky-core-module.png), or
+[component board](assets/exploded/sharky-components.png).
 
-## Project status
+## Licence
 
-SHARKY is an active experimental platform, not a consumer product or a finished
-reference design. Expect to validate dimensions, electrical ratings, joint
-directions, and software limits against your own build.
-
-## Licensing
-
-The vendored `ros2_pca9685` package retains its BSD-3-Clause licence. No licence
-is granted for the remaining project-original material in this snapshot; see
-[`NOTICE.md`](NOTICE.md) before redistributing or adapting it.
+The vendored `ros2_pca9685` package retains its BSD-3-Clause licence. See
+[`NOTICE.md`](NOTICE.md) for the project-original code, parts, and media.

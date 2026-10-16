@@ -1,128 +1,204 @@
-# Software setup
+# Raspberry Pi + ROS 2 setup
 
-This guide builds the workspace without starting the robot. Commands are run on
-the Raspberry Pi unless a step says otherwise.
+This guide installs SHARKY on a Raspberry Pi Zero 2 W using **Ubuntu Server
+24.04 LTS (64-bit)** and **ROS 2 Jazzy Jalisco**. Jazzy is the ROS 2 long-term
+support release for Ubuntu 24.04 and provides native arm64 packages.
 
-## 1. Prepare the computer
+## 1. Install Ubuntu Server
 
-Use a Raspberry Pi Zero 2 W (or another Linux SBC with compatible I2C) and a
-supported 64-bit Linux image. Install ROS 2 by following the official
-instructions for the ROS distribution and operating-system combination you
-choose. A minimal `ros-base` installation is sufficient.
+1. Install [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
+2. Choose **Raspberry Pi Zero 2 W** as the device.
+3. Choose **Ubuntu Server 24.04 LTS (64-bit)** as the operating system.
+4. In Imager customisation, set your hostname, user, Wi-Fi, locale, and SSH key.
+5. Write the image, insert the card, boot the Pi, and connect over SSH.
 
-You will also need Git, a C/C++ toolchain, Python 3, `rosdep`, and `colcon`.
-Package names vary between operating-system releases, so prefer your ROS
-distribution's official installation guide over copying an old package list.
+Use your own credentials in Imager. Do not add passwords, private keys, network
+names, or the completed `config/sharky.env` file to this repository.
 
-Do not connect servo power during operating-system or software setup.
+Update the Pi:
 
-## 2. Create a private local configuration
+```bash
+sudo apt update
+sudo apt full-upgrade -y
+sudo reboot
+```
 
-Clone the repository and make an untracked local environment file:
+Reconnect after the reboot and confirm that Ubuntu reports `aarch64`:
+
+```bash
+uname -m
+```
+
+## 2. Check the Ubuntu repositories
+
+ROS 2's Raspberry Pi guide requires the `updates` and `backports` suites. Check
+the active Ubuntu source:
+
+```bash
+grep -A4 '^Types: deb' /etc/apt/sources.list.d/ubuntu.sources
+```
+
+For Ubuntu 24.04, the `Suites:` line should include:
+
+```text
+noble noble-updates noble-backports
+```
+
+If either suite is missing, edit the file before continuing:
+
+```bash
+sudo nano /etc/apt/sources.list.d/ubuntu.sources
+```
+
+## 3. Install ROS 2 Jazzy
+
+Set a UTF-8 locale and enable Ubuntu Universe:
+
+```bash
+sudo apt update
+sudo apt install -y locales software-properties-common curl
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+sudo add-apt-repository universe
+```
+
+Install the official ROS repository configuration package:
+
+```bash
+export ROS_APT_SOURCE_VERSION=$(curl -s \
+  https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest \
+  | grep -F 'tag_name' | awk -F'"' '{print $4}')
+
+curl -L -o /tmp/ros2-apt-source.deb \
+  "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
+
+sudo dpkg -i /tmp/ros2-apt-source.deb
+```
+
+Install the lightweight ROS base and development tools:
+
+```bash
+sudo apt update
+sudo apt full-upgrade -y
+sudo apt install -y ros-jazzy-ros-base ros-dev-tools \
+  python3-colcon-common-extensions python3-rosdep \
+  python3-flask python3-opencv python3-psutil git i2c-tools
+```
+
+Load ROS automatically in new Bash sessions:
+
+```bash
+echo 'source /opt/ros/jazzy/setup.bash' >> ~/.bashrc
+source /opt/ros/jazzy/setup.bash
+```
+
+Initialise `rosdep` if this is a fresh image:
+
+```bash
+sudo rosdep init
+rosdep update
+```
+
+If `rosdep init` reports that its sources file already exists, continue with
+`rosdep update`.
+
+Check the installation:
+
+```bash
+ros2 --help
+printenv ROS_DISTRO
+```
+
+The second command should print `jazzy`.
+
+## 4. Enable I2C
+
+Add the Raspberry Pi I2C overlay if it is not already present:
+
+```bash
+grep -q '^dtparam=i2c_arm=on' /boot/firmware/config.txt || \
+  echo 'dtparam=i2c_arm=on' | sudo tee -a /boot/firmware/config.txt
+sudo usermod -aG i2c "$USER"
+sudo reboot
+```
+
+Reconnect and check that the I2C bus exists:
+
+```bash
+ls -l /dev/i2c-1
+i2cdetect -y 1
+```
+
+The PCA9685 normally appears at address `0x40`.
+
+## 5. Build SHARKY
+
+Clone the repository and create a ROS workspace:
 
 ```bash
 git clone https://github.com/lgib2u/SHARKY.git
-cd SHARKY
-cp config/sharky.env.example config/sharky.env
-```
-
-Edit `config/sharky.env` for your own network and ROS environment. Never commit
-that file. The example deliberately contains placeholders rather than working
-credentials or machine identifiers.
-
-Load your edited values into the current shell:
-
-```bash
-set -a
-. config/sharky.env
-set +a
-```
-
-The dashboard binds to `127.0.0.1` by default because its hardware controls do
-not provide built-in authentication. If remote access is required, place it
-behind an authenticated local reverse proxy; do not expose port 5000 directly.
-
-## 3. Build the ROS workspace
-
-Create a workspace and copy the two packages into it:
-
-```bash
 mkdir -p ~/sharky_ws/src
-cp -R software/sharky_control ~/sharky_ws/src/
-cp -R software/ros2_pca9685 ~/sharky_ws/src/
+cp -R SHARKY/software/sharky_control ~/sharky_ws/src/
+cp -R SHARKY/software/ros2_pca9685 ~/sharky_ws/src/
 cd ~/sharky_ws
 ```
 
-Resolve available dependencies and build:
+Install package dependencies and build sequentially to suit the Pi Zero 2 W:
 
 ```bash
-source /opt/ros/$ROS_DISTRO/setup.bash
-rosdep update
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
+source /opt/ros/jazzy/setup.bash
+rosdep install --from-paths src --ignore-src -r -y --rosdistro jazzy
+colcon build --symlink-install --executor sequential
 source install/setup.bash
 ```
 
-Building does not start ROS nodes and does not command hardware.
+Add the workspace to future Bash sessions:
 
-## 4. Install the example gait profile
+```bash
+echo 'source ~/sharky_ws/install/setup.bash' >> ~/.bashrc
+```
 
-The controller looks for a local active profile first. Install the example with
-ordinary user permissions:
+## 6. Install the gait profile
 
 ```bash
 mkdir -p ~/.config/sharky/gaits
-cp /path/to/SHARKY/config/smooth_crawl_v1.json \
+cp ~/SHARKY/config/smooth_crawl_v1.json \
   ~/.config/sharky/gaits/active.json
 ```
 
-Review every angle against the mechanical build before using it. Right-side
-joint flips and channel limits are implemented in the controller; they are not
-universal wiring instructions.
+If you cloned the repository somewhere other than `~/SHARKY`, change the source
+path in the command.
 
-## 5. Inspect without motors
+## 7. Launch SHARKY
 
-With servo power disconnected, source the workspace and inspect the package:
+Start the motion stack:
 
 ```bash
-source /opt/ros/$ROS_DISTRO/setup.bash
+source /opt/ros/jazzy/setup.bash
 source ~/sharky_ws/install/setup.bash
-ros2 pkg executables sharky_control
-ros2 pkg executables ros2_pca9685
-```
-
-At this point you can also review the launch file and node parameters. Do not
-launch the full stack merely to see whether the build succeeded.
-
-## 6. First hardware test
-
-Before powering the servo rail, complete every item in
-[`SAFETY.md`](SAFETY.md). Raise and restrain the robot so no foot can reach a
-person, cable, or table. Be ready to remove servo power independently of the Pi.
-
-The full stack can then be started explicitly:
-
-```bash
 ros2 launch sharky_control sharky_full.launch.py
 ```
 
-Launching creates the hardware driver and motion interface, but the controller
-starts disarmed. An explicit arm command enables outputs and moves to the stand
-pose. Do not send it until the channel map and neutral positions are verified.
+The web interface binds to `127.0.0.1:5000` by default. To open it from another
+computer without exposing the controller directly, create an SSH tunnel:
 
-## 7. Stop safely
+```bash
+ssh -L 5000:127.0.0.1:5000 YOUR_PI_USER@YOUR_PI_HOST
+```
 
-Use the dashboard's disarm control or the local command interface before ending
-a session. Confirm that PWM outputs are disabled, stop the ROS processes, and
-then disconnect servo power.
+Then open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
-## Troubleshooting
+## Useful checks
 
-- If `rosdep` cannot resolve a dependency, verify that the selected ROS release
-  supports your operating system and architecture.
-- If the PCA9685 service is missing, check I2C enablement and wiring with servo
-  power disconnected.
-- If a joint would move the wrong way, stop and correct the mapping or linkage;
-  do not increase angle limits to force it.
-- If the camera is unavailable, test the camera independently before launching
-  the combined web interface.
+```bash
+ros2 node list
+ros2 service list | grep pca9685
+ros2 topic list
+```
+
+Official references:
+
+- [ROS 2 Jazzy Ubuntu packages](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+- [ROS 2 on Raspberry Pi](https://docs.ros.org/en/jazzy/How-To-Guides/Installing-on-Raspberry-Pi.html)
+- [Raspberry Pi Imager and headless setup](https://www.raspberrypi.com/documentation/computers/getting-started.html)
