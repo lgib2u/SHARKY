@@ -49,6 +49,30 @@ servo testing in the browser.
 The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
 **ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
 
+For prolonged use, we recommend **MG90/MG90S metal-geared servos** instead of
+SG90 servos, and the **Pololu U3V40F5 5 V step-up regulator** in place of the
+early XL6019-compatible module to reduce heat. Check the exact servo dimensions,
+pulse range, direction, and peak current before treating it as a drop-in change.
+
+## Demo
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="assets/demo/sharky-dashboard.png" alt="SHARKY browser dashboard showing the live camera and controls" width="100%">
+    </td>
+    <td width="50%">
+      <a href="assets/demo/sharky-demo.mp4">
+        <img src="assets/demo/sharky-demo-preview.gif" alt="Animated preview of SHARKY walking; select to play the full video" width="100%">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Live browser dashboard</strong></td>
+    <td align="center"><strong>Walking demo — select to play the full video</strong></td>
+  </tr>
+</table>
+
 ## Licence
 
 SHARKY's original code, printable parts, documentation, and media are licensed

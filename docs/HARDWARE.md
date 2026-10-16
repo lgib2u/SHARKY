@@ -31,3 +31,14 @@ already contains the left and right pieces.
 Open the models in your slicer and inspect every layer before printing. Printer
 tolerances, servo variants, screw selection, material, wall count, infill, and
 support needs remain build-specific.
+
+## Recommended servos and regulator
+
+For prolonged use, prefer **MG90/MG90S metal-geared servos** over SG90 servos.
+Confirm that the selected model fits the printed mounts and matches the expected
+voltage, direction, pulse range, and current budget before commissioning it.
+
+Use the **Pololu U3V40F5 5 V step-up regulator** in preference to the
+XL6019-compatible module used during early development. It is the recommended
+choice for reducing heat, but the completed power system must still be checked
+under representative Pi and servo loads.
