@@ -48,13 +48,6 @@ servo testing in the browser.
 The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
 **ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
 
-## See inside
-
-The latest exploded animation uses the original Fusion colours on a transparent
-background. Open the [10-second WebM](assets/exploded/sharky-exploded-transparent.webm),
-[core module](assets/exploded/sharky-core-module.png), or
-[component board](assets/exploded/sharky-components.png).
-
 ## Licence
 
 SHARKY's original code, printable parts, documentation, and media are licensed
