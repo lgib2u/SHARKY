@@ -1,0 +1,127 @@
+{
+  "document": "Quadruped Simplified",
+  "joints": [
+    {
+      "axis": [
+        0.906307787,
+        -0.422618262,
+        0.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "rear_right_knuckle_joint",
+      "occurrence_one": "LegR2_1:1",
+      "occurrence_two": "FootR2_1:1",
+      "old_name": "Rigid 16",
+      "pca9685_channel": 7
+    },
+    {
+      "axis": [
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "rear_right_shoulder_joint",
+      "occurrence_one": "base_link:1",
+      "occurrence_two": "LegR2_1:1",
+      "old_name": "Rigid 17",
+      "pca9685_channel": 6
+    },
+    {
+      "axis": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "front_right_knuckle_joint",
+      "occurrence_one": "LegR1_1:1",
+      "occurrence_two": "FootR1_1:1",
+      "old_name": "Rigid 18",
+      "pca9685_channel": 3
+    },
+    {
+      "axis": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "front_right_shoulder_joint",
+      "occurrence_one": "base_link:1",
+      "occurrence_two": "LegR1_1:1",
+      "old_name": "Rigid 19",
+      "pca9685_channel": 2
+    },
+    {
+      "axis": [
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "front_left_shoulder_joint",
+      "occurrence_one": "LegL1_1:1",
+      "occurrence_two": "base_link:1",
+      "old_name": "Rigid 20",
+      "pca9685_channel": 0
+    },
+    {
+      "axis": [
+        -1.0,
+        -0.0,
+        0.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "front_left_knuckle_joint",
+      "occurrence_one": "LegL1_1:1",
+      "occurrence_two": "FootL1_1:1",
+      "old_name": "Rigid 21",
+      "pca9685_channel": 1
+    },
+    {
+      "axis": [
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "rear_left_shoulder_joint",
+      "occurrence_one": "LegL2_1:1",
+      "occurrence_two": "base_link:1",
+      "old_name": "Rigid 22",
+      "pca9685_channel": 4
+    },
+    {
+      "axis": [
+        -0.906307787,
+        -0.422618262,
+        0.0
+      ],
+      "joint_type": 1,
+      "maximum_deg": 90.0,
+      "minimum_deg": -90.0,
+      "name": "rear_left_knuckle_joint",
+      "occurrence_one": "LegL2_1:1",
+      "occurrence_two": "FootL2_1:1",
+      "old_name": "Rigid 23",
+      "pca9685_channel": 5
+    }
+  ],
+  "limit_basis": "180-degree actuator capability; simplified CAD sweep found no tighter collision boundary",
+  "reference_pose": "current CAD pose treated as neutral/zero"
+}

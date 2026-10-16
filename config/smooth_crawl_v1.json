@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "smooth_crawl_v1",
+  "angles": {
+    "rot_forward_front": 15.0,
+    "rot_forward_rear": 30.0,
+    "rot_back": 110.0,
+    "rot_neutral": 90.0,
+    "foot_up": 75.0,
+    "foot_down_front": 178.0,
+    "foot_down_rear": 175.0,
+    "foot_neutral": 90.0
+  },
+  "timings": {
+    "lift": 0.30,
+    "transfer": 0.45,
+    "lower": 0.30,
+    "pose_rotation": 0.55,
+    "pose_feet": 0.65
+  }
+}

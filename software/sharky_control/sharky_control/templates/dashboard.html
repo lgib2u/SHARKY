@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Sharky V2</title>
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --stop-red: #dc3545;
+      --armed-green: #28a745;
+      --glass: rgba(0, 0, 0, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --nav-h: 68px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+              Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%; width: 100%;
+      font-family: var(--font);
+      color: white;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       LOADING SCREEN
+    ══════════════════════════════════════ */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0208f6;
+      transition: opacity 0.8s ease;
+    }
+
+    #loading-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Camo layers (same as portfolio) */
+    .camo-layer {
+      position: absolute;
+      inset: 0;
+      background-size: 600px 600px;
+      background-repeat: repeat;
+    }
+
+    #camo1 {
+      background-image:
+        linear-gradient(135deg, rgba(13,110,253,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(13,110,253,0.35) 100%),
+        url('/static/camo1.png');
+      background-blend-mode: soft-light;
+      animation: camo-drift-a 18s linear infinite;
+    }
+    #camo3 {
+      background-image:
+        linear-gradient(45deg, rgba(13,110,253,0.3) 0%, rgba(0,0,0,0.25) 50%, rgba(13,110,253,0.4) 100%),
+        url('/static/camo3.png');
+      background-blend-mode: soft-light;
+      animation: camo-drift-a 30s linear infinite reverse;
+    }
+
+    @keyframes camo-drift-a {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 300px 200px, 300px 200px; }
+    }
+
+
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 5;
+    }
+
+    #loading-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    #loading-title {
+      font-family: var(--font);
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    #loading-subtitle {
+      font-family: var(--font);
+      font-size: clamp(0.9rem, 3vw, 1.4rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.08em;
+    }
+
+    #loading-bar-wrap {
+      margin-top: 2.5rem;
+      width: 220px;
+      height: 3px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #loading-bar {
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 2px;
+      transition: width 4s linear;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN UI
+    ══════════════════════════════════════ */
+
+    #camera-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #111;
+    }
+    #cam-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #cam-offline {
+      position: absolute; inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.85rem;
+    }
+    #cam-offline svg { width: 52px; height: 52px; opacity: 0.25; }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+    }
+
+    /* ── Navbar ── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    #title-block {
+      flex: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    #title {
+      font-family: var(--font);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      line-height: 1;
+      margin: 0;
+    }
+
+    #title::after {
+      content: '_';
+      animation: blink-cursor 1s step-end infinite;
+    }
+
+    @keyframes blink-cursor {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    #nav-subtitle {
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--primary);
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+    }
+
+    #armed-pill {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+    #armed-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #555;
+      transition: background 0.3s, box-shadow 0.3s;
+      flex-shrink: 0;
+    }
+    #armed-dot.armed    { background: var(--armed-green); box-shadow: 0 0 7px var(--armed-green); }
+    #armed-dot.disarmed { background: #888; }
+
+    #btn-arm-toggle, #btn-neutral, #btn-tilt-up, #btn-tilt-down {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    #btn-arm-toggle:hover, #btn-neutral:hover, #btn-tilt-up:hover, #btn-tilt-down:hover { background: rgba(255,255,255,0.2); }
+    #btn-neutral:disabled, #btn-tilt-up:disabled, #btn-tilt-down:disabled { opacity: 0.4; cursor: default; }
+    #btn-arm-toggle.armed {
+      background: rgba(220,53,69,0.3);
+      border-color: rgba(220,53,69,0.6);
+    }
+
+    #btn-estop {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(220,53,69,0.9);
+      background: rgba(220,53,69,0.5);
+      color: white;
+      font-family: var(--font);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(220,53,69,0.4);
+    }
+    #btn-estop:active { transform: scale(0.92); }
+    #btn-estop:disabled { opacity: 0.5; cursor: default; }
+    #btn-estop.reset-mode {
+      border-color: rgba(40,167,69,0.9);
+      background: rgba(40,167,69,0.45);
+      box-shadow: 0 0 12px rgba(40,167,69,0.4);
+    }
+
+    /* ── Overlay layout ── */
+    #overlay {
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0; bottom: 0;
+      z-index: 10;
+      pointer-events: none;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      grid-template-rows: 1fr auto;
+      gap: 10px;
+    }
+
+    #log-panel {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      pointer-events: all;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      overflow: hidden;
+    }
+
+    #log-header {
+      font-family: var(--font);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      padding: 8px 10px 6px;
+      flex-shrink: 0;
+    }
+
+    #log-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 8px 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.68rem;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.7);
+      min-height: 0;
+    }
+    #log-list::-webkit-scrollbar { width: 3px; }
+    #log-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .log-ts { color: rgba(13,110,253,0.9); margin-right: 4px; }
+
+    #stats-strip {
+      grid-column: 2;
+      grid-row: 2;
+      pointer-events: all;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 7px 16px;
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.5);
+    }
+    .stat { display: flex; align-items: center; gap: 5px; }
+    .stat-val { color: rgba(255,255,255,0.85); }
+    #s-battery.danger  { color: #dc3545; }
+    #s-battery.warning { color: #ffc107; }
+
+    #ctrl-panel {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      pointer-events: all;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 4px;
+    }
+
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 56px);
+      grid-template-rows: repeat(3, 56px);
+      gap: 5px;
+    }
+
+    .speed-wrap {
+      width: 100%;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .speed-label {
+      font-family: var(--font);
+      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); white-space: nowrap;
+    }
+    .speed-wrap input[type=range] { flex: 1; accent-color: var(--primary); }
+    .speed-val {
+      font-family: var(--font);
+      font-size: 0.78rem; min-width: 32px; text-align: right;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .ctrl-btn {
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: white;
+      font-family: var(--font);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .ctrl-btn:active { background: rgba(13,110,253,0.5); transform: scale(0.93); }
+    .ctrl-btn.wide {
+      width: 100%; height: 48px;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .ctrl-center {
+      border-color: rgba(220,53,69,0.5);
+      background: rgba(220,53,69,0.25);
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+    }
+    .ctrl-center:active { background: rgba(220,53,69,0.6); }
+    .ctrl-empty { visibility: hidden; }
+
+    /* ── Mobile ── */
+    @media (max-width: 767px) {
+      #overlay {
+        padding: 8px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto auto;
+      }
+      #log-panel { grid-column: 1; grid-row: 1; max-height: 130px; align-self: start; }
+      #stats-strip { display: none; }
+      #ctrl-panel {
+        grid-column: 1; grid-row: 3;
+        flex-direction: row; flex-wrap: wrap;
+        justify-content: center; align-items: flex-end;
+        gap: 8px; padding-bottom: 0;
+      }
+      .dpad {
+        grid-template-columns: repeat(3, 64px);
+        grid-template-rows: repeat(3, 64px);
+        gap: 6px;
+      }
+      .ctrl-btn { width: 64px; height: 64px; font-size: 1.4rem; border-radius: 12px; }
+      .ctrl-btn.wide { height: 54px; }
+      .speed-wrap { width: 220px; }
+
+      #title { font-size: 1rem; }
+      #nav-subtitle { display: none; }
+    }
+
+    /* ── Test Panel ── */
+    #btn-test-panel {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.35);
+      font-family: var(--font);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    #btn-test-panel:hover  { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+    #btn-test-panel.active { border-color: rgba(255,193,7,0.4); color: rgba(255,193,7,0.8); }
+
+    #test-panel {
+      position: fixed;
+      top: calc(var(--nav-h) + 8px);
+      right: 16px;
+      z-index: 200;
+      padding: 14px 16px;
+      min-width: 260px;
+      display: none;
+    }
+    #test-panel-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 10px;
+    }
+    #servo-select {
+      width: 100%;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 7px;
+      color: white;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      padding: 7px 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      outline: none;
+    }
+    #servo-select option { background: #1a1a1a; }
+    .servo-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    #servo-angle { flex: 1; accent-color: #ffc107; }
+    #servo-degree {
+      min-width: 42px;
+      color: #ffc107;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: right;
+    }
+    .servo-range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 2px 12px;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.62rem;
+    }
+    #servo-apply {
+      width: 100%;
+      border: 1px solid rgba(255,193,7,0.45);
+      border-radius: 7px;
+      background: rgba(255,193,7,0.14);
+      color: #ffc107;
+      font-family: var(--font);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    #servo-apply:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+
+<!-- ══ Loading Screen ══ -->
+<div id="loading-screen">
+  <div class="camo-layer" id="camo1"></div>
+  <div class="camo-layer" id="camo3"></div>
+  <div id="loading-overlay"></div>
+  <div id="loading-content">
+    <div id="loading-title">SHARKY</div>
+    <div id="loading-subtitle">V2 &mdash; ROS2 &mdash; Lewis Gibney</div>
+    <div id="loading-bar-wrap"><div id="loading-bar"></div></div>
+  </div>
+</div>
+
+<!-- ══ Camera ══ -->
+<div id="camera-bg">
+  <img id="cam-img" src="/camera_stream" alt=""
+       onerror="document.getElementById('cam-offline').style.display='flex';this.style.display='none'">
+  <div id="cam-offline">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M15 10l4.553-2.069A1 1 0 0121 8.867V15.134a1 1 0 01-1.447.9L15 14M4 8h8a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2z"/>
+    </svg>
+    Camera unavailable
+  </div>
+</div>
+
+<!-- ══ Navbar ══ -->
+<nav id="header">
+  <div id="title-block">
+    <h1 id="title">SHARKY - V2 - ROS</h1>
+    <span id="nav-subtitle">by Lewis Gibney</span>
+  </div>
+  <div id="armed-pill">
+    <div id="armed-dot" class="disarmed"></div>
+    <span id="armed-label">Disarmed</span>
+  </div>
+  <button id="btn-arm-toggle" onclick="toggleArm()">Arm</button>
+  <button id="btn-neutral" onclick="setNeutral()" disabled>Neutral</button>
+  <button id="btn-tilt-up" onclick="setTilt('up')" disabled>Tilt &#8593;</button>
+  <button id="btn-tilt-down" onclick="setTilt('down')" disabled>Tilt &#8595;</button>
+  <button id="btn-test-panel" onclick="toggleTestPanel()">Servo Test</button>
+  <button id="btn-estop" onclick="eStopToggle()">STOP</button>
+</nav>
+
+<!-- == Gait-safe Servo Test Panel == -->
+<div id="test-panel" class="glass">
+  <div id="test-panel-title">Gait-safe Servo Test</div>
+  <select id="servo-select" onchange="updateServoOptions()">
+    <option value="0">FL &mdash; Rotate (ch 0)</option>
+    <option value="1">FL &mdash; Foot (ch 1)</option>
+    <option value="2">FR &mdash; Rotate (ch 2)</option>
+    <option value="3">FR &mdash; Foot (ch 3)</option>
+    <option value="4">RL &mdash; Rotate (ch 4)</option>
+    <option value="5">RL &mdash; Foot (ch 5)</option>
+    <option value="6">RR &mdash; Rotate (ch 6)</option>
+    <option value="7">RR &mdash; Foot (ch 7)</option>
+  </select>
+  <div class="servo-slider-row">
+    <input type="range" id="servo-angle" step="1" value="90"
+           oninput="updateServoReadout()">
+    <output id="servo-degree" for="servo-angle">90&deg;</output>
+  </div>
+  <div class="servo-range-labels">
+    <span id="servo-min">15&deg;</span>
+    <span>Gait envelope</span>
+    <span id="servo-max">110&deg;</span>
+  </div>
+  <button id="servo-apply" onclick="testServo()">Move to selected gait angle</button>
+</div>
+
+
+<!-- ══ Overlay ══ -->
+<div id="overlay">
+
+  <div id="log-panel" class="glass">
+    <div id="log-header">Terminal</div>
+    <div id="log-list"></div>
+  </div>
+
+  <div id="stats-strip" class="glass">
+    <div class="stat"><span>CPU</span><span class="stat-val" id="s-cpu">—</span></div>
+    <div class="stat"><span>RAM</span><span class="stat-val" id="s-ram">—</span></div>
+    <div class="stat"><span>Temp</span><span class="stat-val" id="s-temp">—</span></div>
+    <div class="stat"><span>Battery</span><span class="stat-val" id="s-battery">—</span></div>
+    <div class="stat"><span>Last</span><span class="stat-val" id="s-cmd">—</span></div>
+  </div>
+
+  <div id="ctrl-panel">
+    <div class="dpad">
+      <div class="ctrl-btn ctrl-empty"></div>
+      <button class="ctrl-btn"
+        onmousedown="pressMove('forward')"    onmouseup="releaseMove()" onmouseleave="releaseMove()"
+        ontouchstart="pressMove('forward')"   ontouchend="releaseMove()" ontouchcancel="releaseMove()">&#8593;</button>
+      <div class="ctrl-btn ctrl-empty"></div>
+
+      <button class="ctrl-btn"
+        onmousedown="pressMove('turn_left')"  onmouseup="releaseMove()" onmouseleave="releaseMove()"
+        ontouchstart="pressMove('turn_left')" ontouchend="releaseMove()" ontouchcancel="releaseMove()">&#8634;</button>
+      <button class="ctrl-btn ctrl-center" onclick="sendCmd('stop')">STP</button>
+      <button class="ctrl-btn"
+        onmousedown="pressMove('turn_right')"  onmouseup="releaseMove()" onmouseleave="releaseMove()"
+        ontouchstart="pressMove('turn_right')" ontouchend="releaseMove()" ontouchcancel="releaseMove()">&#8635;</button>
+
+      <div class="ctrl-btn ctrl-empty"></div>
+      <button class="ctrl-btn"
+        onmousedown="pressMove('backward')"   onmouseup="releaseMove()" onmouseleave="releaseMove()"
+        ontouchstart="pressMove('backward')"  ontouchend="releaseMove()" ontouchcancel="releaseMove()">&#8595;</button>
+      <div class="ctrl-btn ctrl-empty"></div>
+    </div>
+
+    <div class="glass speed-wrap">
+      <span class="speed-label">Speed</span>
+      <input type="range" id="speed-slider" min="0.2" max="1.6667" step="0.05" value="1.0"
+             oninput="updateSpeed(this.value)">
+      <span class="speed-val" id="speed-val">1.0x</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Loading screen ──
+  window.addEventListener('load', () => {
+    const bar = document.getElementById('loading-bar');
+    // Trigger the CSS transition
+    requestAnimationFrame(() => { bar.style.width = '100%'; });
+
+    setTimeout(() => {
+      const ls = document.getElementById('loading-screen');
+      ls.classList.add('fade-out');
+      setTimeout(() => ls.remove(), 850);
+    }, 4000);
+  });
+
+  // ── State ──
+  let isArmed = false;
+  let motorsStopped = false;
+  let restartPollTimer = null;
+  let logCache = [];
+
+  // ── Arm toggle ──
+  function toggleArm() {
+    isArmed ? sendCmd('disarm') : sendCmd('arm');
+  }
+
+  function setArmed(armed) {
+    isArmed = armed;
+    document.getElementById('armed-dot').className    = armed ? 'armed' : 'disarmed';
+    document.getElementById('armed-label').textContent = armed ? 'Armed' : 'Disarmed';
+    const btn = document.getElementById('btn-arm-toggle');
+    btn.textContent = armed ? 'Disarm' : 'Arm';
+    btn.className   = armed ? 'armed'  : '';
+    document.getElementById('btn-neutral').disabled = !armed;
+    document.getElementById('btn-tilt-up').disabled = !armed;
+    document.getElementById('btn-tilt-down').disabled = !armed;
+  }
+
+  function setNeutral() {
+    if (!isArmed) {
+      appendLog('[SYS] Arm the robot before selecting Neutral');
+      return;
+    }
+    sendCmd('neutral');
+  }
+
+  function setTilt(direction) {
+    if (!isArmed) {
+      appendLog('[SYS] Arm the robot before changing body tilt');
+      return;
+    }
+    sendCmd(direction === 'up' ? 'tilt_up' : 'tilt_down');
+  }
+
+  // ── Commands ──
+  function sendCmd(cmd) {
+    fetch('/cmd?move=' + encodeURIComponent(cmd))
+      .then(r => r.json())
+      .then(() => {
+        if (cmd === 'arm')    setArmed(true);
+        if (cmd === 'disarm') setArmed(false);
+      })
+      .catch(e => appendLog('[ERROR] ' + e));
+  }
+
+  let moveRepeatTimer = null;
+  function pressMove(cmd) {
+    clearInterval(moveRepeatTimer);
+    sendCmd(cmd);
+    moveRepeatTimer = setInterval(() => sendCmd(cmd), 250);
+  }
+  function releaseMove() {
+    clearInterval(moveRepeatTimer);
+    moveRepeatTimer = null;
+    sendCmd('stop');
+  }
+
+  // ── E-Stop ──
+  function eStopToggle() {
+    const btn = document.getElementById('btn-estop');
+    if (!motorsStopped) {
+      releaseMove();
+      sendCmd('stop');
+      fetch('/kill_motors').then(r => r.json()).then(() => {
+        motorsStopped = true;
+        setArmed(false);
+        btn.textContent = 'RESET';
+        btn.classList.add('reset-mode');
+        appendLog('[SYS] Motion stopped and disarmed — press RESET, then ARM');
+      }).catch(e => appendLog('[ERROR] kill: ' + e));
+    } else {
+      btn.textContent = '...';
+      btn.disabled = true;
+      appendLog('[SYS] Resetting controller...');
+      fetch('/restart_motors').then(r => r.json()).then(() => {
+        restartPollTimer = setInterval(() => {
+          fetch('/restart_status').then(r => r.json()).then(d => {
+            if (d.state === 'ready') {
+              clearInterval(restartPollTimer);
+              motorsStopped = false;
+              btn.textContent = 'STOP';
+              btn.classList.remove('reset-mode');
+              btn.disabled = false;
+              appendLog('[SYS] Controller ready — re-arm to move');
+            }
+          }).catch(() => {});
+        }, 500);
+      }).catch(e => {
+        appendLog('[ERROR] restart: ' + e);
+        btn.textContent = 'RESET';
+        btn.disabled = false;
+      });
+    }
+  }
+
+  // ── Speed ──
+  function updateSpeed(val) {
+    const displayedScale = parseFloat(val);
+    // Keep the centre position labelled 1.0x while mapping it to SHARKY's
+    // 3.0x gait rate. The full slider spans 0.6x through the 5.0x safety cap.
+    const gaitScale = Math.min(5.0, Math.max(0.5, displayedScale * 3.0));
+    document.getElementById('speed-val').textContent = displayedScale.toFixed(1) + 'x';
+    fetch('/cmd?move=speed&value=' + gaitScale.toFixed(3)).catch(() => {});
+  }
+
+  // ── Log ──
+  function appendLog(entry) {
+    const list = document.getElementById('log-list');
+    const div  = document.createElement('div');
+    const m    = entry.match(/^(\[\d{2}:\d{2}:\d{2}\])\s*(.*)$/);
+    if (m) div.innerHTML = '<span class="log-ts">' + m[1] + '</span>' + m[2];
+    else   div.textContent = entry;
+    list.appendChild(div);
+    list.scrollTop = list.scrollHeight;
+    while (list.children.length > 200) list.removeChild(list.firstChild);
+  }
+
+  function pollLogs() {
+    fetch('/logs').then(r => r.json()).then(entries => {
+      entries.filter(e => !logCache.includes(e)).forEach(appendLog);
+      logCache = entries.slice();
+    }).catch(() => {});
+  }
+
+  // ── Stats ──
+  function pollStats() {
+    fetch('/stats').then(r => r.json()).then(d => {
+      document.getElementById('s-cpu').textContent  = d.cpu  != null ? d.cpu  + '%'  : '—';
+      document.getElementById('s-ram').textContent  = d.ram  != null ? d.ram  + '%'  : '—';
+      document.getElementById('s-temp').textContent = d.temp != null ? d.temp + '°C' : '—';
+      document.getElementById('s-cmd').textContent  = d.last_cmd || '—';
+      if (d.battery) {
+        const el = document.getElementById('s-battery');
+        el.textContent = d.battery.status + ' (' + d.battery.charge + ')';
+        el.className   = 'stat-val ' + (d.battery.level === 'danger' ? 'danger' : d.battery.level === 'warning' ? 'warning' : '');
+      }
+    }).catch(() => {});
+  }
+
+  // ── Keyboard ──
+  const keyMap = {
+    ArrowUp:'forward', ArrowDown:'backward',
+    ArrowLeft:'turn_left', ArrowRight:'turn_right',
+    a:'strafe_left', d:'strafe_right',
+    ' ':'stop', e:'arm', q:'disarm', n:'neutral',
+    PageUp:'tilt_up', PageDown:'tilt_down'
+  };
+  const keysDown = {};
+
+  document.addEventListener('keydown', ev => {
+    if (keysDown[ev.key]) return;
+    keysDown[ev.key] = true;
+    const cmd = keyMap[ev.key];
+    if (cmd) { ev.preventDefault(); sendCmd(cmd); }
+  });
+  document.addEventListener('keyup', ev => {
+    if (!keysDown[ev.key]) return;
+    keysDown[ev.key] = false;
+    const cmd = keyMap[ev.key];
+    if (cmd && !['stop','arm','disarm','neutral','tilt_up','tilt_down'].includes(cmd)) sendCmd('stop');
+  });
+
+  // ── Init ──
+  pollLogs();
+  pollStats();
+  setInterval(pollLogs,  1500);
+  setInterval(pollStats, 3000);
+
+  // ── Gait-safe Servo Test Panel ──
+  const servoTestRanges = {
+    0: [15, 110],
+    1: [75, 178],
+    2: [70, 165],
+    3: [2, 105],
+    4: [30, 110],
+    5: [75, 175],
+    6: [70, 150],
+    7: [5, 105]
+  };
+  let testPanelOpen = false;
+
+  function toggleTestPanel() {
+    testPanelOpen = !testPanelOpen;
+    document.getElementById('test-panel').style.display = testPanelOpen ? 'block' : 'none';
+    document.getElementById('btn-test-panel').classList.toggle('active', testPanelOpen);
+  }
+
+  function updateServoOptions() {
+    const channel = Number(document.getElementById('servo-select').value);
+    const [minimum, maximum] = servoTestRanges[channel];
+    const slider = document.getElementById('servo-angle');
+    slider.min = minimum;
+    slider.max = maximum;
+    slider.value = 90;
+    document.getElementById('servo-min').textContent = minimum + '\u00b0';
+    document.getElementById('servo-max').textContent = maximum + '\u00b0';
+    updateServoReadout();
+  }
+
+  function updateServoReadout() {
+    document.getElementById('servo-degree').textContent =
+      document.getElementById('servo-angle').value + '\u00b0';
+  }
+
+  function testServo() {
+    if (!isArmed) {
+      appendLog('[TEST] Arm the robot before testing a servo');
+      return;
+    }
+    const channel = document.getElementById('servo-select').value;
+    const angle = document.getElementById('servo-angle').value;
+    fetch('/servo_test?channel=' + channel + '&angle=' + angle)
+      .then(async response => ({ok: response.ok, body: await response.json()}))
+      .then(({ok, body}) => {
+        if (ok) appendLog('[TEST] Channel ' + channel + ' -> ' + angle + '\u00b0');
+        else appendLog('[TEST] REJECTED: ' + (body.msg || body.status));
+      })
+      .catch(error => appendLog('[TEST] ERROR: ' + error));
+  }
+
+  updateServoOptions();
+
+
+</script>
+</body>
+</html>
