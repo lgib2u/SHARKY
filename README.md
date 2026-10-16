@@ -30,11 +30,11 @@ servo testing in the browser.
 
 | Print | Build | Code | Control |
 | --- | --- | --- | --- |
-| Nine ready-to-slice STL files | Raspberry Pi Zero 2 W + PCA9685 + eight servos | Python and C++ ROS 2 packages | Responsive local web dashboard |
+| Nine Fusion fabrication STLs | Raspberry Pi Zero 2 W + PCA9685 + eight servos | Python and C++ ROS 2 packages | Responsive local web dashboard |
 
 ## Everything you need to get started
 
-- [`parts/stl`](parts/stl) — body, four legs, and four feet
+- [`parts/stl`](parts/stl) — the full printable body set, exported from Fusion
 - [`software/sharky_control`](software/sharky_control) — gait, motion, camera, and dashboard
 - [`software/ros2_pca9685`](software/ros2_pca9685) — ROS 2 servo-driver package
 - [`config`](config) — bounded crawl-gait profile and local configuration template
@@ -43,7 +43,7 @@ servo testing in the browser.
 
 ## Build SHARKY
 
-1. [Print the nine parts](parts/stl).
+1. [Download and print the nine fabrication files](parts/stl).
 2. Assemble the body, eight servos, Raspberry Pi, camera, and controller board.
 3. [Install Ubuntu and ROS 2 on the Pi](docs/SETUP.md).
 4. Build the SHARKY workspace and launch the dashboard.

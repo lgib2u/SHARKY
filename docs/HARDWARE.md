@@ -9,7 +9,7 @@ The illustrated build uses:
 - eight micro servos
 - Raspberry Pi-compatible camera
 - regulated servo power stage and a separate, appropriate Pi supply
-- fabricated body, four upper legs, and four feet
+- fabricated shell, internal holder, four legs, four knuckles, and detail inserts
 
 The image is an exploded presentation, not a wiring diagram. Components are
 shown at a common illustrative scale and substitutions require fresh electrical
@@ -18,20 +18,25 @@ and mechanical checks.
 ## Geometry and parts
 
 The printable geometry is supplied directly as millimetre-scale STL files under
-[`parts/stl`](../parts/stl). These are the actual Fusion body exports, separated
-from simulation metadata and renamed by their physical position on the robot.
-The body is approximately 120 mm long, which provides a useful scale check when
-the file is first imported into a slicer.
+[`parts/stl`](../parts/stl). These are high-resolution exports from the full
+Fusion assembly, not the simplified visualisation meshes. The main body is
+approximately 121 mm long, which provides a useful scale check when the file is
+first imported into a slicer.
 
-Print one of each file:
+Print four legs, four knuckles, and one of every other file. The eye-insert file
+already contains the left and right pieces.
 
-| Files | Position |
+| File | Purpose |
 | --- | --- |
-| `body.stl` | Main chassis and shell |
-| `front-left-leg.stl` / `front-left-foot.stl` | Front left |
-| `front-right-leg.stl` / `front-right-foot.stl` | Front right |
-| `rear-left-leg.stl` / `rear-left-foot.stl` | Rear left |
-| `rear-right-leg.stl` / `rear-right-foot.stl` | Rear right |
+| `main-body.stl` | Main shell and servo mounting structure |
+| `internal-electronics-holder.stl` | Internal Pi, power, and controller carrier |
+| `lid.stl` | Top lid and dorsal-fin detail |
+| `leg.stl` | Lower leg; print four |
+| `knuckle.stl` | Servo knuckle; print four |
+| `eye-inserts.stl` | Left and right eye inserts |
+| `mouth-insert.stl` | Toothed mouth detail |
+| `blow-hole.stl` | Blow-hole cap |
+| `rear-cover.stl` | Rear connector cover |
 
 Open the models in your slicer and inspect every layer before printing. Printer
 tolerances, servo variants, screw selection, material, wall count, infill, and

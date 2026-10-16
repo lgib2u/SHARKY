@@ -1,27 +1,27 @@
 # SHARKY print files
 
-These nine binary STL files are direct fabrication exports of the SHARKY body,
-four legs, and four feet. They are supplied in millimetres and named by their
-physical position on the assembled robot—no URDF, Xacro, simulation frames, or
-ROS package metadata is mixed into this directory.
+These nine binary STL files are high-resolution exports from the full SHARKY
+Fusion assembly. They are supplied in millimetres and contain the fabrication
+bodies—not the simplified meshes previously used for visualisation.
 
-Print one of each file.
+The eye file contains both inserts. Print four copies each of the leg and
+knuckle; print one of every other file.
 
-| File | Approximate bounding box (mm) |
-| --- | ---: |
-| `body.stl` | 119.71 × 104.50 × 71.77 |
-| `front-left-leg.stl` | 37.19 × 56.98 × 38.26 |
-| `front-left-foot.stl` | 20.00 × 77.66 × 15.48 |
-| `front-right-leg.stl` | 37.19 × 56.98 × 38.26 |
-| `front-right-foot.stl` | 20.00 × 77.66 × 15.48 |
-| `rear-left-leg.stl` | 43.80 × 52.70 × 38.26 |
-| `rear-left-foot.stl` | 41.88 × 74.61 × 15.48 |
-| `rear-right-leg.stl` | 41.47 × 59.76 × 38.26 |
-| `rear-right-foot.stl` | 48.19 × 74.61 × 15.48 |
+| File | Quantity | Approximate bounding box (mm) |
+| --- | ---: | ---: |
+| `main-body.stl` | 1 | 120.71 × 104.50 × 63.91 |
+| `internal-electronics-holder.stl` | 1 | 108.37 × 39.25 × 54.63 |
+| `lid.stl` | 1 | 104.57 × 43.94 × 26.06 |
+| `leg.stl` | 4 | 20.00 × 77.66 × 15.48 |
+| `knuckle.stl` | 4 | 37.19 × 56.97 × 38.26 |
+| `eye-inserts.stl` | 1 pair | 0.80 × 29.32 × 6.58 |
+| `mouth-insert.stl` | 1 | 1.20 × 38.69 × 14.07 |
+| `blow-hole.stl` | 1 | 13.14 × 13.14 × 5.50 |
+| `rear-cover.stl` | 1 | 3.00 × 28.73 × 24.18 |
 
 ## Before printing
 
-1. Confirm that the body is approximately 120 mm long after import. If it is
+1. Confirm that the main body is approximately 121 mm long after import. If it is
    unexpectedly tiny or huge, set the slicer's import units to millimetres.
 2. Choose a stable face and orient each part for your printer rather than
    assuming the exported CAD orientation is the ideal print orientation.
