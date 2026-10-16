@@ -2,8 +2,6 @@
   <img src="assets/header/sharky-header.gif" alt="SHARKY — compact quadruped robot" width="100%">
 </p>
 
-<h3 align="center">Print it. Build it. Bring it to life with ROS 2.</h3>
-
 <p align="center">
   SHARKY is a compact Raspberry Pi quadruped with eight articulated servos,
   live camera vision, a browser controller, and a whole lot of bite.
