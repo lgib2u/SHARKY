@@ -43,7 +43,7 @@ servo testing in the browser.
 2. Assemble the body, eight servos, Raspberry Pi, camera, and controller board.
 3. [Install Ubuntu and ROS 2 on the Pi](docs/SETUP.md).
 4. Build the SHARKY workspace and launch the dashboard.
-5. Tune the gait profile and make SHARKY move your way.
+5. Take it further, build an attachment, test and algorithm - enjoy! 
 
 The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
 **ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
