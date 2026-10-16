@@ -50,7 +50,41 @@ If either suite is missing, edit the file before continuing:
 sudo nano /etc/apt/sources.list.d/ubuntu.sources
 ```
 
-## 3. Install ROS 2 Jazzy
+## 3. Configure swap for builds
+
+The Raspberry Pi Zero 2 W has 512 MB of RAM, which is not enough to build the
+SHARKY ROS 2 workspace reliably without additional swap. SHARKY uses a 3 GiB
+swapfile and builds packages sequentially.
+
+```bash
+sudo fallocate -l 3G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+grep -qF '/swapfile swap swap defaults 0 0' /etc/fstab || \
+  echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+echo 'vm.swappiness=10' | sudo tee /etc/sysctl.d/99-sharky-swap.conf
+sudo sysctl --system
+```
+
+Confirm that the swapfile is active and the setting was applied:
+
+```bash
+swapon --show
+free -h
+sysctl vm.swappiness
+```
+
+The expected results are a 3 GiB `/swapfile` and
+`vm.swappiness = 10`. Disk-backed swap writes to the microSD card, so use a
+high-endurance card where possible and keep the sequential build command in
+section 6.
+
+For a visual explanation of the same Ubuntu swapfile procedure, see the
+[swap section of this Raspberry Pi Zero 2 W walkthrough](https://www.youtube.com/watch?v=-BObt8inVs8&t=563s).
+The video demonstrates a 2 GiB file; SHARKY uses 3 GiB for its ROS 2 builds.
+
+## 4. Install ROS 2 Jazzy
 
 Set a UTF-8 locale and enable Ubuntu Universe:
 
@@ -112,7 +146,7 @@ printenv ROS_DISTRO
 
 The second command should print `jazzy`.
 
-## 4. Enable I2C
+## 5. Enable I2C
 
 Add the Raspberry Pi I2C overlay if it is not already present:
 
@@ -132,7 +166,7 @@ i2cdetect -y 1
 
 The PCA9685 normally appears at address `0x40`.
 
-## 5. Build SHARKY
+## 6. Build SHARKY
 
 Clone the repository and create a ROS workspace:
 
@@ -159,7 +193,7 @@ Add the workspace to future Bash sessions:
 echo 'source ~/sharky_ws/install/setup.bash' >> ~/.bashrc
 ```
 
-## 6. Install the gait profile
+## 7. Install the gait profile
 
 ```bash
 mkdir -p ~/.config/sharky/gaits
@@ -170,7 +204,7 @@ cp ~/SHARKY/config/smooth_crawl_v1.json \
 If you cloned the repository somewhere other than `~/SHARKY`, change the source
 path in the command.
 
-## 7. Launch SHARKY
+## 8. Launch SHARKY
 
 Start the motion stack:
 
