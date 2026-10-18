@@ -4,7 +4,7 @@
 
 <p align="center">
   SHARKY is a compact Raspberry Pi quadruped with eight articulated servos,
-  live camera vision, a browser controller, and a whole lot of bite.
+  live camera vision and a browser controller.
 </p>
 
 <p align="center">
