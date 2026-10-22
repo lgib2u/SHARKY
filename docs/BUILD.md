@@ -15,19 +15,12 @@ Raspberry Pi control software to the PCA9685 board and eight servos.
 
 ![SHARKY wiring diagram](../assets/diagrams/sharky-wiring-diagram.png)
 
-The installed SHARKY build uses a **Pololu U3V40F5 5 V step-up regulator** in
-place of the pictured XL6019-compatible module. Match the terminal names on the
-actual modules before making connections. The U3V40F5 is the recommended option
-for reducing heat compared with the early XL6019-based build; verify its 5 V
-output and temperature under the finished robot's real load.
-
-For prolonged operation, use **MG90/MG90S metal-geared servos** in preference
-to SG90 servos. The metal gear train is better suited to repeated loaded motion,
-but verify the exact model's case dimensions, mounting, voltage, pulse range,
-direction, and peak current before installation.
+For prolonged use, we recommend **MG90/MG90S metal-geared servos** instead of
+SG90 servos, and the **Pololu U3V40F5 5 V step-up regulator** in place of the
+early XL6019-compatible module to reduce heat.
 
 The illustration shows the intended two-cell parallel pack and TP4056 charging
-module. Confirm cell matching, battery protection, and the terminal layout of
+module. Confirm cell matching, circuit protection, and the terminal layout of
 the particular TP4056 board used in the build.
 
 The Raspberry Pi to PCA9685 logic connections are:
