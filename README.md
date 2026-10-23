@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  SHARKY is a compact Raspberry Pi quadruped with eight articulated servos,
-  live camera vision and a browser controller.
+  SHARKY is a cheap and compact ROS2 quadruped with eight servos,
+  live FPV camera vision and a web browser controller.
 </p>
 
 <p align="center">
@@ -20,20 +20,9 @@
   </a>
 </p>
 
-## A robot you can make your own
+## Get started
 
-SHARKY combines printable mechanical parts with a focused ROS 2 control stack.
-The motion controller drives a smooth crawl gait, the camera streams a live
-view, and the lightweight dashboard puts movement, speed, pose, and individual
-servo testing in the browser.
-
-| Print | Build | Code | Control |
-| --- | --- | --- | --- |
-| Nine Fusion fabrication STLs | Raspberry Pi Zero 2 W + PCA9685 + eight servos | Python and C++ ROS 2 packages | Responsive local web dashboard |
-
-## Everything you need to get started
-
-- [`parts/stl`](parts/stl) — the full printable body set, exported from Fusion
+- [`parts/stl`](parts/stl) — the full printable body set
 - [`software/sharky_control`](software/sharky_control) — gait, motion, camera, and dashboard
 - [`software/ros2_pca9685`](software/ros2_pca9685) — ROS 2 servo-driver package
 - [`config`](config) — bounded crawl-gait profile and local configuration template
@@ -46,13 +35,9 @@ servo testing in the browser.
 4. Build the SHARKY workspace and launch the dashboard.
 5. Take it further, build an attachment, test and algorithm - enjoy! 
 
-The full build guide targets **Ubuntu Server 24.04 LTS arm64** and
-**ROS 2 Jazzy** on a Raspberry Pi Zero 2 W.
+## A robot you can make your own
 
-For prolonged use, we recommend **MG90/MG90S metal-geared servos** instead of
-SG90 servos, and the **Pololu U3V40F5 5 V step-up regulator** in place of the
-early XL6019-compatible module to reduce heat. Check the exact servo dimensions,
-pulse range, direction, and peak current before treating it as a drop-in change.
+SHARKY was built to be extensible. Feel free to make your own attachments to connect through the top hole! Start with the attachment connecter or produce your own mount!
 
 ## Demo
 
