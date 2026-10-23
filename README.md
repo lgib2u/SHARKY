@@ -48,7 +48,7 @@ SHARKY was built to be extensible. Feel free to make your own attachments to con
     </td>
     <td width="50%">
       <a href="assets/demo/sharky-demo.mp4">
-        <img src="assets/demo/sharky-demo-preview.gif" alt="Animated preview of SHARKY walking; select to play the full video" width="100%">
+        <img src="assets/demo/sharky-demo-preview.gif" alt="Animated preview of SHARKY walking. Click to watch full video!" width="100%">
       </a>
     </td>
   </tr>
