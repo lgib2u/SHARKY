@@ -68,3 +68,4 @@ rows.
 4. Make the power and signal connections shown in the wiring diagram.
 5. Continue with the [Pi and ROS 2 setup](SETUP.md), then install the gait
    profile and launch SHARKY.
+   
